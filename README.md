@@ -75,3 +75,34 @@ Error messages are shown inline below each field.
 - Email: harsh@example.com
 - Gender: Male
 - Course: JavaScript
+
+
+
+# Console-Based Patient Management System
+
+## Features
+- Object-Oriented Design
+- Patient Type Abstraction
+- Factory Pattern
+- Delegate-based Billing Strategy
+- Event-driven Notifications
+- Console-based interaction
+
+## Flow
+1. Admit Patient
+2. Select Patient Type
+3. Calculate Treatment Bill
+4. Apply Billing Strategy (Delegate)
+5. Generate Bill
+6. Trigger Events and Notify Departments
+
+## How to Run
+```bash
+dotnet build
+dotnet run
+```
+
+## Technologies
+- C#
+- .NET 6
+- Delegates & Events
