@@ -70,8 +70,8 @@ Error messages are shown inline below each field.
 
 ## 📸 Sample Output
 
--Registration Successful!
--Name: Harsh
--Email: harsh@example.com
--Gender: Male
--Course: JavaScript
+- Registration Successful!
+- Name: Harsh
+- Email: harsh@example.com
+- Gender: Male
+- Course: JavaScript
