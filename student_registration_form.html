@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Advanced Student Registration</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = { darkMode: 'class' }
+</script>
+</head>
+
+<body class="bg-gray-100 dark:bg-gray-900 dark:text-white min-h-screen flex items-center justify-center">
+
+<main class="w-full max-w-md bg-white dark:bg-gray-800 p-6 rounded-xl shadow-xl">
+
+    <!-- HEADER -->
+    <header class="flex justify-between items-center mb-4">
+        <h1 class="text-xl font-bold">Student Registration</h1>
+        <button id="themeToggle" aria-label="Toggle dark mode"
+            class="px-2 py-1 text-sm bg-gray-700 text-white rounded">
+            🌙
+        </button>
+    </header>
+
+    <!-- FORM -->
+    <form id="form" class="space-y-4" novalidate>
+
+        <div>
+            <label class="block text-sm font-medium">Name</label>
+            <input id="name" type="text"
+                class="w-full p-2 border rounded dark:bg-gray-700"
+                aria-required="true">
+            <p class="text-red-400 text-sm hidden" id="nameError"></p>
+        </div>
+
+        <div>
+            <label class="block text-sm font-medium">Email</label>
+            <input id="email" type="email"
+                class="w-full p-2 border rounded dark:bg-gray-700"
+                aria-required="true">
+            <p class="text-red-400 text-sm hidden" id="emailError"></p>
+        </div>
+
+        <fieldset>
+            <legend class="text-sm font-medium">Gender</legend>
+            <div class="flex gap-4 mt-1">
+                <label><input type="radio" name="gender" value="Male"> Male</label>
+                <label><input type="radio" name="gender" value="Female"> Female</label>
+            </div>
+            <p class="text-red-400 text-sm hidden" id="genderError"></p>
+        </fieldset>
+
+        <div>
+            <label class="block text-sm font-medium">Course</label>
+            <select id="course"
+                class="w-full p-2 border rounded dark:bg-gray-700">
+                <option value="">Select</option>
+                <option>JavaScript</option>
+                <option>Python</option>
+                <option>Java</option>
+                <option>C++</option>
+            </select>
+            <p class="text-red-400 text-sm hidden" id="courseError"></p>
+        </div>
+
+        <label class="flex items-center gap-2 text-sm">
+            <input type="checkbox" id="terms">
+            Accept Terms & Conditions
+        </label>
+        <p class="text-red-400 text-sm hidden" id="termsError"></p>
+
+        <button id="submitBtn"
+            class="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700 transition">
+            Register
+        </button>
+
+        <div id="status"></div>
+    </form>
+
+    <!-- OUTPUT -->
+    <section id="output" class="mt-4"></section>
+</main>
+
+<script>
+/* ================= STATE ================= */
+const state = {
+    name: "",
+    email: "",
+    gender: "",
+    course: "",
+    terms: false
+};
+
+/* ================= UTILITIES ================= */
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+const debounce = (fn, delay = 300) => {
+    let timer;
+    return (...args) => {
+        clearTimeout(timer);
+        timer = setTimeout(() => fn(...args), delay);
+    };
+};
+
+/* ================= DOM ================= */
+const els = {
+    name: document.getElementById("name"),
+    email: document.getElementById("email"),
+    course: document.getElementById("course"),
+    terms: document.getElementById("terms"),
+    status: document.getElementById("status"),
+    output: document.getElementById("output"),
+    submitBtn: document.getElementById("submitBtn")
+};
+
+/* ================= VALIDATION ================= */
+function validate() {
+    let valid = true;
+
+    toggleError("nameError", state.name === "");
+    toggleError("emailError", !emailRegex.test(state.email));
+    toggleError("genderError", state.gender === "");
+    toggleError("courseError", state.course === "");
+    toggleError("termsError", !state.terms);
+
+    if (
+        !state.name ||
+        !emailRegex.test(state.email) ||
+        !state.gender ||
+        !state.course ||
+        !state.terms
+    ) valid = false;
+
+    return valid;
+}
+
+function toggleError(id, condition) {
+    document.getElementById(id).classList.toggle("hidden", !condition);
+}
+
+/* ================= EVENTS ================= */
+els.name.addEventListener("input", debounce(e => state.name = e.target.value.trim()));
+els.email.addEventListener("input", debounce(e => state.email = e.target.value.trim()));
+els.course.addEventListener("change", e => state.course = e.target.value);
+els.terms.addEventListener("change", e => state.terms = e.target.checked);
+
+document.getElementsByName("gender").forEach(radio =>
+    radio.addEventListener("change", e => state.gender = e.target.value)
+);
+
+/* ================= SUBMIT ================= */
+document.getElementById("form").addEventListener("submit", e => {
+    e.preventDefault();
+    els.status.innerHTML = "";
+    els.output.innerHTML = "";
+
+    if (!validate()) {
+        els.status.innerHTML = "<p class='text-red-400'>Fix validation errors</p>";
+        return;
+    }
+
+    els.submitBtn.disabled = true;
+
+    els.status.innerHTML =
+        "<p class='text-green-400 font-bold'>Registration Successful!</p>";
+
+    els.output.innerHTML = `
+        <div class="mt-3 text-sm bg-green-900/20 p-3 rounded">
+            <p>Name: ${state.name}</p>
+            <p>Email: ${state.email}</p>
+            <p>Gender: ${state.gender}</p>
+            <p>Course: ${state.course}</p>
+        </div>`;
+});
+
+/* ================= DARK MODE ================= */
+const toggleBtn = document.getElementById("themeToggle");
+const root = document.documentElement;
+
+if (localStorage.theme === "dark") root.classList.add("dark");
+
+toggleBtn.onclick = () => {
+    root.classList.toggle("dark");
+    localStorage.theme = root.classList.contains("dark") ? "dark" : "light";
+};
+</script>
+
+</body>
+</html>
